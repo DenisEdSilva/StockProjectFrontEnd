@@ -1,0 +1,21 @@
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+export function middleware(request: NextRequest) {
+    const token = request.cookies.get('stockproject.token')?.value
+    const { pathname } = request.nextUrl
+    
+    if (token && pathname.startsWith('/auth')) {
+        return NextResponse.redirect(new URL('/owner/select-store', request.url))
+    }
+
+    if (!token && (pathname.startsWith('/owner') || pathname.startsWith('/stores'))) {
+        return NextResponse.redirect(new URL('/auth/signin', request.url))
+    }
+
+    return NextResponse.next()
+}
+
+export const config = {
+    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+}
