@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 
 type Action = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-type Resource = 'CATEGORY' | 'CATALOG' | 'INVENTORY' | 'STOCK' | 'AUDIT_LOG' | 'STORE_USER' | 'STORE' | 'ROLE';
+type Resource = 'CATEGORY' | 'CATALOG' | 'INVENTORY' | 'STOCK' | 'AUDIT_LOG' | 'STORE_USER' | 'STORE' | 'ROLE' | 'TRANSFER';
 
 export function useCan() {
   const { user } = useContext(AuthContext);

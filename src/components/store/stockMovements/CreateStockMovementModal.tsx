@@ -18,6 +18,7 @@ import {
   ArrowDownCircle, MoveHorizontal, AlertCircle 
 } from "lucide-react"
 import { Product } from '@/types/product'
+import { useCan } from '@/hooks/useCan'
 
 const stockMovementSchema = z.object({
   type: z.enum(['IN', 'OUT', 'TRANSFER'] as const),
@@ -38,7 +39,16 @@ type StockMovementFormData = z.infer<typeof stockMovementSchema>
 
 export function CreateStockMovementModal({ storeId }: { storeId: number }) {
   const [open, setOpen] = useState(false)
+  const { hasPermission  } = useCan();
   const queryClient = useQueryClient()
+
+  const canViewTransferTargets = hasPermission('GET', "TRANSFER")
+
+  const movementTypes = [
+    'IN',
+    'OUT',
+    ...(hasPermission('GET', 'TRANSFER') ? ['TRANSFER'] : [])
+  ] as const
 
   const { register, handleSubmit, control, reset, formState: { errors } } = useForm<StockMovementFormData>({
     resolver: zodResolver(stockMovementSchema),
@@ -56,7 +66,7 @@ export function CreateStockMovementModal({ storeId }: { storeId: number }) {
   const { data: transferTargets, isLoading: isLoadingTargets } = useQuery({
     queryKey: ['transfer-targets', storeId],
     queryFn: () => stockService.getTransferDestinations(storeId),
-    enabled: open && selectedType === 'TRANSFER'
+    enabled: open && selectedType === 'TRANSFER' && canViewTransferTargets
   })
 
   const { mutateAsync: createMovementFn, isPending } = useMutation({
@@ -96,7 +106,7 @@ export function CreateStockMovementModal({ storeId }: { storeId: number }) {
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase text-slate-500 tracking-widest">Tipo de Operação</label>
             <div className="grid grid-cols-3 gap-2 p-1 bg-slate-950 rounded-lg border border-slate-800">
-              {(['IN', 'OUT', 'TRANSFER'] as const).map((t) => (
+              {movementTypes.map((t) => (
                 <label key={t} className={`flex flex-col items-center justify-center py-3 rounded-md cursor-pointer transition-all border ${selectedType === t ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' : 'border-transparent text-slate-500 hover:text-slate-300'}`}>
                   <input type="radio" {...register('type')} value={t} className="hidden" />
                   {t === 'IN' && <ArrowUpCircle className="w-5 h-5 mb-1" />}
