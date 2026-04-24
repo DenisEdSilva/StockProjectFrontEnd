@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StockProject Dashboard 🚀
 
-## Getting Started
+Interface web para gestão de inventário multi-tenant com controle granular de acesso e foco em experiência do usuário.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📌 Visão Geral
+
+O **StockProject Dashboard** é o frontend da aplicação, responsável por:
+
+* Interação com o usuário
+* Visualização de dados em tempo real
+* Controle de permissões no cliente
+* Experiência fluida e responsiva
+
+---
+
+## 🛠 Tech Stack
+
+* **Framework:** Next.js (App Router)
+* **Linguagem:** TypeScript
+* **Estado & Cache:** TanStack Query v5
+* **UI:** ShadcnUI + Radix UI
+* **Estilo:** TailwindCSS
+* **Formulários:** React Hook Form + Zod
+
+---
+
+## 🌟 Funcionalidades
+
+### 🔐 RBAC + Exceções
+
+* Permissões base por cargo
+* Exceções individuais por usuário
+
+### 📦 Controle de Estoque
+
+* IN / OUT / TRANSFER
+* Reversão de movimentações
+
+### 🔄 Sincronização em Tempo Real
+
+Uso do React Query para cache e atualização automática
+
+### 🧠 Inteligência de SKU
+
+Geração automática de código quando necessário
+
+### 🖼 Resiliência de Imagem
+
+* Fallback automático
+* Validação de URLs
+
+---
+
+## 🏗 Arquitetura
+
+```
+src/
+ ├── services/     # API layer
+ ├── hooks/        # lógica reutilizável (auth, RBAC)
+ ├── components/   # UI + lógica de negócio
+ ├── types/        # tipagens globais
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📦 Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+git clone https://github.com/DenisEdSilva/StockProjectFrontEnd.git
 
-## Learn More
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔧 Variáveis de Ambiente
 
-## Deploy on Vercel
+```env
+NEXT_PUBLIC_API_URL="http://localhost:3333"
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔗 Integração com API
+
+* Comunicação via REST
+* Autenticação com JWT
+* Controle de acesso sincronizado com RBAC do backend
+
+---
+
+## 🎯 Boas Práticas Aplicadas
+
+* Separação de responsabilidades
+* Componentização
+* Tipagem forte com TypeScript
+* Validação com schema (Zod)
+* Cache inteligente
+
+---
+
+## 👤 Autor
+
+Desenvolvido por Denis Eduardo da Silva 🚀
