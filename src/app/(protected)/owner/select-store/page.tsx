@@ -16,7 +16,7 @@ export default function SelectStorePage() {
   const router = useRouter();
 
   const { data: stores, isLoading } = useQuery({
-    queryKey: ['my-stores'],
+    queryKey: ['my-stores', user?.id], 
     queryFn: storeService.listMyStores,
     enabled: !!user,
   });
