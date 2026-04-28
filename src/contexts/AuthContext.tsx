@@ -1,9 +1,10 @@
 'use client'
-import { createContext, ReactNode, useEffect, useState } from 'react';
+import { createContext, ReactNode, useCallback, useEffect, useState } from 'react';
 import { setCookie, destroyCookie, parseCookies } from 'nookies';
 import { useRouter } from 'next/navigation';
 import { User, AuthResponse, SignInCredentials } from '@/types/auth';
 import { api } from '@/lib/api';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface AuthContextData {
     user: User | null;
@@ -16,14 +17,16 @@ export const AuthContext = createContext({} as AuthContextData);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
+    const queryClient = useQueryClient();
     const router = useRouter();
 
-    function signOut() {
+    const signOut = useCallback(() => {
         destroyCookie(undefined, 'stockproject.token', { path: '/' });
         setUser(null);
         delete api.defaults.headers.common['Authorization']; 
+        queryClient.clear();
         router.push('/auth/signin');
-    }
+    }, [router, queryClient]);
 
     useEffect(() => {
         const { 'stockproject.token': token } = parseCookies();
@@ -38,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 signOut();
             });
         }
-    }, []);
+    }, [signOut]);
 
     async function signIn(credentials: SignInCredentials) {
         try {
