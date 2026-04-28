@@ -1,5 +1,5 @@
 'use client'
-import { createContext, ReactNode, useEffect, useState } from 'react';
+import { createContext, ReactNode, useEffect, useState, useContext } from 'react';
 import { setCookie, destroyCookie, parseCookies } from 'nookies';
 import { useRouter } from 'next/navigation';
 import { User, AuthResponse, SignInCredentials } from '@/types/auth';
@@ -9,17 +9,19 @@ interface AuthContextData {
     user: User | null;
     signIn: (credentials: SignInCredentials) => Promise<void>;
     signOut: () => void;
+    isAuthenticated: boolean;
 }
 
-export const AuthContext = createContext( {} as AuthContextData );
+export const AuthContext = createContext({} as AuthContextData);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const router = useRouter();
 
     function signOut() {
-        destroyCookie(undefined, 'stockproject.token');
+        destroyCookie(undefined, 'stockproject.token', { path: '/' });
         setUser(null);
+        delete api.defaults.headers.common['Authorization']; 
         router.push('/auth/signin');
     }
 
@@ -27,14 +29,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { 'stockproject.token': token } = parseCookies();
 
         if (token) {
-            api.get('/me').then( response => {
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+            api.get('/me').then(response => {
                 setUser(response.data);
             })
-            .catch(()=> {
+            .catch(() => {
                 signOut();
             });
         }
-    }, [])
+    }, []);
 
     async function signIn(credentials: SignInCredentials) {
         try {
@@ -49,7 +53,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
 
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
             setUser(userData);
 
             if (userData.type === 'OWNER') {
@@ -65,8 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, signIn, signOut}}>
+        <AuthContext.Provider value={{ user, signIn, signOut, isAuthenticated: !!user }}>
             {children}
         </AuthContext.Provider>
     )
 }
+
+// O HOOK CUSTOMIZADO (Isso faz o código do AppSidebar que mandei funcionar)
