@@ -3,7 +3,7 @@
 import { 
   Package, Tags, History, Users, 
   ShieldCheck, LayoutDashboard,  
-  ScrollText, Store
+  ScrollText, Store, LogOut
 } from "lucide-react"
 import {
   Sidebar,
@@ -20,12 +20,16 @@ import {
   SidebarTrigger,
   useSidebar
 } from "@/components/ui/sidebar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useCan } from "@/hooks/useCan"
+import { useAuth } from "@/hooks/useAuth"
 import { useParams, usePathname } from "next/navigation"
 import Link from "next/link"
+import { Button } from "../ui/button"
 
 export function AppSidebar() {
   const { canView } = useCan()
+  const { user, signOut } = useAuth()
   const pathname = usePathname()
   const { storeId } = useParams()
 
@@ -118,17 +122,59 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="bg-slate-900 border-t border-slate-800 p-2">
-         <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Voltar para Lojas">
-                <Link href="/owner/select-store" className="text-slate-400 hover:text-white">
-                  <Store className="w-4 h-4" />
-                  <span>Minhas Lojas</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-         </SidebarMenu>
+      <SidebarFooter className="bg-slate-900 border-t border-slate-800 p-3">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              className="w-full bg-slate-950 border border-slate-800/60 hover:border-amber-500/50 hover:bg-amber-500/10 transition-all group"
+            >
+              <Link href={`/stores/${storeId}/profile`}>
+                <Avatar className="h-8 w-8 rounded-md border border-slate-800 group-hover:border-amber-500/50 transition-colors">
+                  <AvatarFallback className="bg-slate-800 text-slate-300 group-hover:text-amber-500 text-xs font-bold rounded-md transition-colors">
+                    {user?.name?.substring(0, 2).toUpperCase() || 'US'}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="flex flex-col gap-0.5 leading-none truncate group-data-[collapsible=icon]:hidden">
+                  <span className="text-sm font-medium text-slate-200 group-hover:text-amber-500 transition-colors">
+                    {user?.name || 'Carregando...'}
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono uppercase tracking-tighter">
+                    {user?.type === 'OWNER' ? 'Administrador' : 'Funcionário'}
+                  </span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+
+        <div className="flex items-center gap-2 mt-2 px-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:mt-4">
+          
+          {user?.type === 'OWNER' && (
+            <Button
+              asChild
+              variant="ghost"
+              className="flex-1 h-8 bg-slate-800/30 text-slate-400 hover:text-amber-500 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all"
+            >
+              <Link href="/owner/select-store" title="Trocar de Loja">
+                <Store className="w-4 h-4" />
+                <span className="ml-2 text-[11px] font-medium group-data-[collapsible=icon]:hidden">Trocar Loja</span>
+              </Link>
+            </Button>
+          )}
+
+          <Button
+            onClick={signOut}
+            variant="ghost"
+            className="flex-1 h-8 bg-slate-800/30 text-slate-500 hover:text-red-400 hover:bg-red-400/10 border border-transparent hover:border-red-400/20 transition-all"
+            title="Encerrar Sessão"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="ml-2 text-[11px] font-medium group-data-[collapsible=icon]:hidden">Sair</span>
+          </Button>
+        </div>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
