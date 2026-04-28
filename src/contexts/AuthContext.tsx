@@ -1,5 +1,5 @@
 'use client'
-import { createContext, ReactNode, useEffect, useState, useContext } from 'react';
+import { createContext, ReactNode, useEffect, useState } from 'react';
 import { setCookie, destroyCookie, parseCookies } from 'nookies';
 import { useRouter } from 'next/navigation';
 import { User, AuthResponse, SignInCredentials } from '@/types/auth';
@@ -73,5 +73,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         </AuthContext.Provider>
     )
 }
-
-// O HOOK CUSTOMIZADO (Isso faz o código do AppSidebar que mandei funcionar)
